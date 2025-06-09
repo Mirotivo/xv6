@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Xv6FileSystemDemos",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-demos",
+            "program": "${workspaceFolder}/Xv6FileSystemDemos/bin/Debug/net9.0/Xv6FileSystemDemos.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Xv6FileSystemDemos",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Launch Xv6FileSystemDemos (External Console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-demos",
+            "program": "${workspaceFolder}/Xv6FileSystemDemos/bin/Debug/net9.0/Xv6FileSystemDemos.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Xv6FileSystemDemos",
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Attach to Process",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}
