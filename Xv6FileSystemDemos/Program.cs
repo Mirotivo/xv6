@@ -1,21 +1,17 @@
 using System;
 using System.Text;
 
-namespace Xv6FileSystemDemos
-{
-    class Program
+class Program
     {
         static void Main(string[] args)
         {
             Console.WriteLine("=== Xv6 File System Demo ===");
-            Console.WriteLine($"Block Size: {Param.BlockSize} bytes");
-            Console.WriteLine($"Max Blocks: {Param.MaxBlocks}");
+            Console.WriteLine($"Block Size: {FS.BlockSize} bytes");
+            Console.WriteLine($"Max Blocks: {FS.MaxBlocks}");
             Console.WriteLine();
 
-            // Initialize the file system components
-            var blockDevice = new BlockDevice();
-            var bufferCache = new BufferCache(blockDevice);
-            var fileSystem = new FileSystem(bufferCache);
+            // Initialize the file system components (mimicking xv6's init sequence)
+            IFileSystem fileSystem = Xv6Factory.CreateFileSystem();
 
             try
             {
@@ -54,7 +50,7 @@ namespace Xv6FileSystemDemos
             Console.ReadKey();
         }
 
-        static void BasicFileOperationsDemo(FileSystem fs)
+        static void BasicFileOperationsDemo(IFileSystem fs)
         {
             // Create and write to a file
             Console.WriteLine("Creating file 'hello.txt'...");
@@ -85,7 +81,7 @@ namespace Xv6FileSystemDemos
             fs.close(fd);
         }
 
-        static void MultipleFilesDemo(FileSystem fs)
+        static void MultipleFilesDemo(IFileSystem fs)
         {
             string[] filenames = { "file1.txt", "file2.txt", "file3.txt" };
             int[] fileDescriptors = new int[filenames.Length];
@@ -120,13 +116,13 @@ namespace Xv6FileSystemDemos
             }
         }
 
-        static void FileSizeLimitsDemo(FileSystem fs)
+        static void FileSizeLimitsDemo(IFileSystem fs)
         {
             Console.WriteLine("Testing file size limits...");
             int fd = fs.open("large.txt", OpenFlags.O_CREATE | OpenFlags.O_RDWR);
 
             // Try to write data that approaches block size limit
-            byte[] largeData = new byte[Param.BlockSize - 10]; // Leave some room
+            byte[] largeData = new byte[FS.BlockSize - 10]; // Leave some room
             for (int i = 0; i < largeData.Length; i++)
             {
                 largeData[i] = (byte)('A' + (i % 26)); // Fill with letters
@@ -145,7 +141,7 @@ namespace Xv6FileSystemDemos
             fs.close(fd);
         }
 
-        static void ErrorHandlingDemo(FileSystem fs)
+        static void ErrorHandlingDemo(IFileSystem fs)
         {
             Console.WriteLine("Testing error conditions...");
 
@@ -188,4 +184,3 @@ namespace Xv6FileSystemDemos
             }
         }
     }
-}

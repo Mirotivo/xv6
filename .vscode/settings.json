@@ -1,7 +1,6 @@
 {
     "dotnet.defaultSolution": "Xv6.sln",
     "omnisharp.enableEditorConfigSupport": true,
-    "omnisharp.enableImportCompletion": true,
     "omnisharp.enableRoslynAnalyzers": true,
     "files.exclude": {
         "**/bin": true,
@@ -10,5 +9,6 @@
     "search.exclude": {
         "**/bin": true,
         "**/obj": true
-    }
+    },
+    "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true
 }

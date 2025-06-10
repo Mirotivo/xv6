@@ -5,7 +5,7 @@ public class UnitTest1
     [Fact]
     public void Test1()
     {
-        var sd = new BlockDevice();
+        var sd = new SPIDevice();
         var cache = new BufferCache(sd);
         var fs = new FileSystem(cache);
 
