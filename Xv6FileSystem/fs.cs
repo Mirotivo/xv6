@@ -96,9 +96,9 @@ public class File
     }
 }
 
-public class FileSystem : IFileSystem
+public class fs : Ifs
 {
-    private IBufferCache cache;
+    private Ibio cache;
     private SuperBlock sb;
     private Inode[] icache;   // In-memory inode cache
     private File[] ftable;    // File table
@@ -107,20 +107,20 @@ public class FileSystem : IFileSystem
     // Simple directory for demo (in real xv6, this would be in the root inode)
     private Dictionary<string, int> rootDir = new Dictionary<string, int>();
     
-    public FileSystem(IBufferCache cache)
+    public fs(Ibio cache)
     {
         this.cache = cache;
-        this.icache = new Inode[Param.NINODE];
-        this.ftable = new File[Param.NFILE];
+        this.icache = new Inode[param.NINODE];
+        this.ftable = new File[param.NFILE];
         
         // Initialize inode cache
-        for (int i = 0; i < Param.NINODE; i++)
+        for (int i = 0; i < param.NINODE; i++)
         {
             icache[i] = new Inode();
         }
         
         // Initialize file table
-        for (int i = 0; i < Param.NFILE; i++)
+        for (int i = 0; i < param.NFILE; i++)
         {
             ftable[i] = new File();
         }
@@ -135,18 +135,18 @@ public class FileSystem : IFileSystem
     // Read superblock from disk
     private void readsb()
     {
-        Buffer bp = cache.BRead(1, 1); // Superblock is at block 1
+        buf bp = cache.BRead(1, 1); // Superblock is at block 1
         
         // Set up superblock with xv6 layout
         sb = new SuperBlock
         {
             size = FS.FSSIZE,
-            nblocks = FS.FSSIZE - Param.LOGSIZE - FS.NINODEBLOCKS - 3, // boot + sb + bitmap
+            nblocks = FS.FSSIZE - param.LOGSIZE - FS.NINODEBLOCKS - 3, // boot + sb + bitmap
             ninodes = FS.NINODES,
-            nlog = Param.LOGSIZE,
+            nlog = param.LOGSIZE,
             logstart = 2,
-            inodestart = 2 + Param.LOGSIZE,
-            bmapstart = 2 + Param.LOGSIZE + FS.NINODEBLOCKS
+            inodestart = 2 + param.LOGSIZE,
+            bmapstart = 2 + param.LOGSIZE + FS.NINODEBLOCKS
         };
         
         cache.BRelse(bp);
@@ -170,7 +170,7 @@ public class FileSystem : IFileSystem
     {
         for (int b = 0; b < sb.size; b += FS.BPB)
         {
-            Buffer bp = cache.BRead(1, (uint)BBLOCK(b));
+            buf bp = cache.BRead(1, (uint)BBLOCK(b));
             
             for (int bi = 0; bi < FS.BPB && b + bi < sb.size; bi++)
             {
@@ -182,7 +182,7 @@ public class FileSystem : IFileSystem
                     cache.BRelse(bp);
                     
                     // Zero the allocated block
-                    Buffer zbp = cache.BRead(1, (uint)(b + bi));
+                    buf zbp = cache.BRead(1, (uint)(b + bi));
                     Array.Clear(zbp.Data, 0, FS.BSIZE);
                     cache.BWrite(zbp);
                     cache.BRelse(zbp);
@@ -198,7 +198,7 @@ public class FileSystem : IFileSystem
     // Free a disk block
     public void bfree(int b)
     {
-        Buffer bp = cache.BRead(1, (uint)BBLOCK(b));
+        buf bp = cache.BRead(1, (uint)BBLOCK(b));
         int bi = b % FS.BPB;
         int m = 1 << (bi % 8);
         
@@ -220,7 +220,7 @@ public class FileSystem : IFileSystem
             {
                 // Check if inode is already in use in cache
                 bool inUse = false;
-                for (int i = 0; i < Param.NINODE; i++)
+                for (int i = 0; i < param.NINODE; i++)
                 {
                     if (icache[i].refCount > 0 && icache[i].inum == inum && icache[i].dinode.type != 0)
                     {
@@ -251,7 +251,7 @@ public class FileSystem : IFileSystem
     // Copy a modified in-memory inode to disk
     public void iupdate(Inode ip)
     {
-        Buffer bp = cache.BRead(1, (uint)IBLOCK(ip.inum));
+        buf bp = cache.BRead(1, (uint)IBLOCK(ip.inum));
         // In real xv6, we'd serialize the inode to the buffer
         cache.BWrite(bp);
         cache.BRelse(bp);
@@ -263,7 +263,7 @@ public class FileSystem : IFileSystem
         lock (lockObject)
         {
             // Is the inode already cached?
-            for (int i = 0; i < Param.NINODE; i++)
+            for (int i = 0; i < param.NINODE; i++)
             {
                 if (icache[i].refCount > 0 && icache[i].inum == inum)
                 {
@@ -273,7 +273,7 @@ public class FileSystem : IFileSystem
             }
             
             // Recycle an inode cache entry
-            for (int i = 0; i < Param.NINODE; i++)
+            for (int i = 0; i < param.NINODE; i++)
             {
                 if (icache[i].refCount == 0)
                 {
@@ -306,7 +306,7 @@ public class FileSystem : IFileSystem
             
         if (!ip.valid)
         {
-            Buffer bp = cache.BRead(1, (uint)IBLOCK(ip.inum));
+            buf bp = cache.BRead(1, (uint)IBLOCK(ip.inum));
             // In real xv6, we'd deserialize the inode from the buffer
             // For demo, we'll mark it as valid
             ip.valid = true;
@@ -355,7 +355,7 @@ public class FileSystem : IFileSystem
         // Free indirect block
         if (ip.dinode.addrs[FS.NDIRECT] != 0)
         {
-            Buffer bp = cache.BRead(1, (uint)ip.dinode.addrs[FS.NDIRECT]);
+            buf bp = cache.BRead(1, (uint)ip.dinode.addrs[FS.NDIRECT]);
             
             for (int j = 0; j < FS.NINDIRECT; j++)
             {
@@ -407,7 +407,7 @@ public class FileSystem : IFileSystem
         }
         
         // Allocate file descriptor - find free slot in file table
-        for (int i = 0; i < Param.NFILE; i++)
+        for (int i = 0; i < param.NFILE; i++)
         {
             if (ftable[i].type == 0)
             {
@@ -445,7 +445,7 @@ public class FileSystem : IFileSystem
             return 0;
         }
         
-        Buffer bp = cache.BRead(1, (uint)blockNum);
+        buf bp = cache.BRead(1, (uint)blockNum);
         int toRead = Math.Min(count, f.ip.dinode.size - f.off);
         toRead = Math.Min(toRead, FS.BSIZE - f.off);
         
@@ -473,7 +473,7 @@ public class FileSystem : IFileSystem
             f.ip.dinode.addrs[0] = blockNum;
         }
         
-        Buffer bp = cache.BRead(1, (uint)blockNum);
+        buf bp = cache.BRead(1, (uint)blockNum);
         int toWrite = Math.Min(count, FS.BSIZE - f.off);
         
         Array.Copy(buf, 0, bp.Data, f.off, toWrite);
@@ -507,7 +507,7 @@ public class FileSystem : IFileSystem
     private File? GetFileByFd(int fd)
     {
         int index = fd - 3;
-        if (index >= 0 && index < Param.NFILE && ftable[index].type != 0)
+        if (index >= 0 && index < param.NFILE && ftable[index].type != 0)
             return ftable[index];
         return null;
     }

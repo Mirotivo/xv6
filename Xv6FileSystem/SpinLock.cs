@@ -1,7 +1,7 @@
 /// <summary>
 /// Simple spinlock implementation using Monitor
 /// </summary>
-public class SpinLock : ISpinLock
+public class spinlock : Ispinlock
 {
     private readonly object lockObject = new object();
 

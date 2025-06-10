@@ -11,7 +11,7 @@ class Program
             Console.WriteLine();
 
             // Initialize the file system components (mimicking xv6's init sequence)
-            IFileSystem fileSystem = Xv6Factory.CreateFileSystem();
+            Ifs fileSystem = Xv6Factory.CreateFileSystem();
 
             try
             {
@@ -50,7 +50,7 @@ class Program
             Console.ReadKey();
         }
 
-        static void BasicFileOperationsDemo(IFileSystem fs)
+        static void BasicFileOperationsDemo(Ifs fs)
         {
             // Create and write to a file
             Console.WriteLine("Creating file 'hello.txt'...");
@@ -81,7 +81,7 @@ class Program
             fs.close(fd);
         }
 
-        static void MultipleFilesDemo(IFileSystem fs)
+        static void MultipleFilesDemo(Ifs fs)
         {
             string[] filenames = { "file1.txt", "file2.txt", "file3.txt" };
             int[] fileDescriptors = new int[filenames.Length];
@@ -116,7 +116,7 @@ class Program
             }
         }
 
-        static void FileSizeLimitsDemo(IFileSystem fs)
+        static void FileSizeLimitsDemo(Ifs fs)
         {
             Console.WriteLine("Testing file size limits...");
             int fd = fs.open("large.txt", OpenFlags.O_CREATE | OpenFlags.O_RDWR);
@@ -141,7 +141,7 @@ class Program
             fs.close(fd);
         }
 
-        static void ErrorHandlingDemo(IFileSystem fs)
+        static void ErrorHandlingDemo(Ifs fs)
         {
             Console.WriteLine("Testing error conditions...");
 

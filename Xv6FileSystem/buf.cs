@@ -1,24 +1,24 @@
 /// <summary>
-/// Buffer structure that mimics the xv6 C struct buf
+/// buf structure that mimics the xv6 C struct buf
 /// </summary>
-public class Buffer
+public class buf
 {
     public bool Valid { get; set; }         // has data been read from disk?
     public bool Disk { get; set; }          // does disk "own" buf?
     public uint Dev { get; set; }           // device number
     public uint BlockNo { get; set; }       // block number
-    public ISleepLock Lock { get; set; }     // sleep lock for this buffer
+    public Isleeplock Lock { get; set; }     // sleep lock for this buffer
     public uint RefCnt { get; set; }        // reference count
-    public Buffer? Prev { get; set; }          // LRU cache list - previous
-    public Buffer? Next { get; set; }          // LRU cache list - next
+    public buf? Prev { get; set; }          // LRU cache list - previous
+    public buf? Next { get; set; }          // LRU cache list - next
     public byte[] Data { get; set; }        // buffer data
     public ushort CRC16 { get; set; }       // CRC16 checksum
 
-    public Buffer() : this(new SleepLock())
+    public buf() : this(new sleeplock())
     {
     }
 
-    public Buffer(ISleepLock sleepLock)
+    public buf(Isleeplock sleepLock)
     {
         Valid = false;
         Disk = false;

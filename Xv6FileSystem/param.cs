@@ -1,5 +1,5 @@
 // System-wide parameters (equivalent to xv6's param.h)
-public static class Param
+public static class param
 {
     // Process and system limits
     public const int NPROC = 8;                 // Maximum number of processes

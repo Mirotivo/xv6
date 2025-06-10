@@ -1,7 +1,7 @@
 /// <summary>
 /// Simple sleep lock implementation
 /// </summary>
-public class SleepLock : ISleepLock
+public class sleeplock : Isleeplock
 {
     private readonly object lockObject = new object();
     private bool locked = false;

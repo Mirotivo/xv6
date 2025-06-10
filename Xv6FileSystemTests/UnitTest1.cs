@@ -6,8 +6,8 @@ public class UnitTest1
     public void Test1()
     {
         var sd = new SPIDevice();
-        var cache = new BufferCache(sd);
-        var fs = new FileSystem(cache);
+        var cache = new bio(sd);
+        var fs = new fs(cache);
 
         // Open file for writing (create if missing)
         int fd = fs.open("test.txt", OpenFlags.O_CREATE | OpenFlags.O_RDWR);

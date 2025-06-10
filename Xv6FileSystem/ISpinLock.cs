@@ -1,7 +1,7 @@
 /// <summary>
 /// Interface for spin lock operations
 /// </summary>
-public interface ISpinLock
+public interface Ispinlock
 {
     void Acquire();
     void Release();

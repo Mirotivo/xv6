@@ -31,7 +31,7 @@ public static class FS
 }
 
 // Interface for file system operations (equivalent to xv6's file system interface)
-public interface IFileSystem
+public interface Ifs
 {
     // File operations
     int open(string filename, OpenFlags flags);

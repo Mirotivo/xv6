@@ -3,22 +3,22 @@ public static class Xv6Factory
 {
     // This mimics xv6's initialization pattern where components are set up in order
     // Similar to how xv6 calls binit(), iinit(), fsinit() in sequence
-    public static IFileSystem CreateFileSystem()
+    public static Ifs CreateFileSystem()
     {
         // Initialize in dependency order (like xv6's main.c initialization)
         ISPIDevice blockDevice = new SPIDevice();  // Like disk driver init
-        IBufferCache bufferCache = new BufferCache(blockDevice);  // Like binit()
-        IFileSystem fileSystem = new FileSystem(bufferCache);  // Like fsinit()
+        Ibio bufferCache = new bio(blockDevice);  // Like binit()
+        Ifs fileSystem = new fs(bufferCache);  // Like fsinit()
         
         return fileSystem;
     }
     
     // Alternative method for when you need access to individual components
-    public static (ISPIDevice blockDevice, IBufferCache bufferCache, IFileSystem fileSystem) CreateComponents()
+    public static (ISPIDevice blockDevice, Ibio bufferCache, Ifs fileSystem) CreateComponents()
     {
         ISPIDevice blockDevice = new SPIDevice();
-        IBufferCache bufferCache = new BufferCache(blockDevice);
-        IFileSystem fileSystem = new FileSystem(bufferCache);
+        Ibio bufferCache = new bio(blockDevice);
+        Ifs fileSystem = new fs(bufferCache);
         
         return (blockDevice, bufferCache, fileSystem);
     }
